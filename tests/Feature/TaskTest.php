@@ -12,21 +12,25 @@ class TaskTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_fetch_all_tasks()
+    public function test_fetch_all_tasks_of_a_todo_list()
     {
-        $task = Task::factory()->create();
         $list = TodoList::factory()->create();
+        $task = Task::factory()->create(['todo_list_id' => $list->id]);
+        Task::factory()->create();
 
         $response = $this->getJson(route('task.index', $list->id))
             ->assertOk()
             ->json();
 
+        //dd($response);
+
 
         $this->assertEquals(1, count($response));
         $this->assertEquals($task->title, $response[0]['title']);
+        $this->assertEquals($task->todo_list_id, $response[0]['todo_list_id']);
     }
 
-    public function test_store_task_in_todo_list()
+    public function test_store_task_in_a_todo_list()
     {
         $list = TodoList::factory()->create();
         $task = Task::factory()->make();

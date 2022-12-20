@@ -20,7 +20,7 @@ class TaskFactory extends Factory
         return [
             'title' => $this->faker->sentence(),
             'todo_list_id' => function () {
-                return TodoList::factory()->create()->get();
+                return TodoList::factory()->create()->id;
             }
         ];
     }
