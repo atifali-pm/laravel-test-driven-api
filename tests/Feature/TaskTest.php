@@ -52,4 +52,29 @@ class TaskTest extends TestCase
         $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
 
     }
+
+    public function test_update_a_task_of_a_todo_list()
+    {
+        $todo_list = TodoList::factory()->create();
+        $task = Task::factory()->create(['todo_list_id' => $todo_list->id]);
+
+        $response = $this->patchJson(route('task.update', $task->id), ['title' => 'Task updated'])
+            ->assertOk()
+            ->json();
+
+        $this->assertEquals('Task updated', $response['title']);
+        $this->assertDatabaseHas('tasks', ['title' => 'Task updated']);
+
+    }
+
+    public function test_a_task_can_be_completed()
+    {
+        $task = Task::factory()->create();
+
+        $response = $this->patchJson(route('task.complete', $task->id), ['is_completed' => true])
+            ->assertOk()
+            ->json();
+
+        $this->assertEquals(true, $response['is_completed']);
+    }
 }
